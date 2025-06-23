@@ -35,4 +35,20 @@ public class AuctionsController(AuctionDbContext context, IMapper mapper) : Cont
 
         return mapper.Map<AuctionDto>(auction);
     }
+
+    [HttpPost]
+    public async Task<ActionResult<AuctionDto>> CreateAuction([FromBody] CreateAuctionDto auctionDto)
+    {
+        var auction = mapper.Map<Auction>(auctionDto);
+
+        //TODO: add current user as seller
+
+        await context.Auctions.AddAsync(auction);
+        await context.SaveChangesAsync();
+
+        return CreatedAtAction(
+            nameof(GetAuctionById),
+            new { id = auction.Id },
+            mapper.Map<AuctionDto>(auction));
+    }
 }
