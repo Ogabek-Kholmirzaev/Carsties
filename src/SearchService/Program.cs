@@ -1,4 +1,7 @@
+using Polly;
+using Polly.Extensions.Http;
 using SearchService.Data;
+using SearchService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +9,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddHttpClient<AuctionSvcHttpClient>().AddPolicyHandler(GetPolicy());
 
 var app = builder.Build();
 
@@ -21,13 +26,22 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-try
+app.Lifetime.ApplicationStarted.Register(async void () =>
 {
-    await DbInitializer.InitDbAsync(app);
-}
-catch (Exception e)
-{
-    Console.WriteLine(e);
-}
+    try
+    {
+        await DbInitializer.InitDbAsync(app);
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+    }
+});
 
 app.Run();
+
+static IAsyncPolicy<HttpResponseMessage> GetPolicy()
+    => HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+        .WaitAndRetryForeverAsync(_ => TimeSpan.FromSeconds(3));
