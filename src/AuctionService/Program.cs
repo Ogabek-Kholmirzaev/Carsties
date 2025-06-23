@@ -1,3 +1,4 @@
+using AuctionService.Data;
 using AuctionService.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,5 +25,14 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+try
+{
+    await DbInitializer.InitDb(app);
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
 
 app.Run();

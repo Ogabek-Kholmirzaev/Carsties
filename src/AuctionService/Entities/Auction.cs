@@ -4,8 +4,8 @@ public class Auction
 {
     public Guid Id { get; set; }
     public int ReservePrice { get; set; }
-    public string Seller { get; set; } = null!;
-    public string Winner { get; set; } = null!;
+    public string Seller { get; set; } = string.Empty;
+    public string Winner { get; set; } = string.Empty;
     public int? SoldAmount { get; set; }
     public int? CurrentHighBid { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
