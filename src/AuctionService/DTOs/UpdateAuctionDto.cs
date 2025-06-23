@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AuctionService.DTOs;
 
-public class UpdateDto
+public class UpdateAuctionDto
 {
     [Required]
     public string Make { get; set; } = null!;

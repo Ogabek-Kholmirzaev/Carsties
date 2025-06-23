@@ -51,4 +51,29 @@ public class AuctionsController(AuctionDbContext context, IMapper mapper) : Cont
             new { id = auction.Id },
             mapper.Map<AuctionDto>(auction));
     }
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult> UpdateAuction(Guid id, [FromBody] UpdateAuctionDto auctionDto)
+    {
+        var auction = await context.Auctions
+            .Include(x => x.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (auction == null)
+        {
+            return NotFound();
+        }
+
+        // TODO: validate if the user is the seller of the auction
+
+        auction.Item.Make = auctionDto.Make;
+        auction.Item.Model = auctionDto.Model;
+        auction.Item.Year = auctionDto.Year;
+        auction.Item.Color = auctionDto.Color;
+        auction.Item.Mileage = auctionDto.Mileage;
+
+        await context.SaveChangesAsync();
+
+        return Ok();
+    }
 }
