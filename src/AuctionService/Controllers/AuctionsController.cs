@@ -1,3 +1,4 @@
+using AuctionService.Data;
 using AuctionService.DTOs;
 using AuctionService.Entities;
 using AutoMapper;
@@ -53,11 +54,11 @@ public class AuctionsController(
         auction.Seller = "test";
 
         await context.Auctions.AddAsync(auction);
-        await context.SaveChangesAsync();
-
+        
         var dto = mapper.Map<AuctionDto>(auction);
-
         await publishEndpoint.Publish(mapper.Map<AuctionCreated>(dto));
+        
+        await context.SaveChangesAsync();
         
         return CreatedAtAction(
             nameof(GetAuctionById),
