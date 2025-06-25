@@ -2,6 +2,8 @@ using AuctionService.DTOs;
 using AuctionService.Entities;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Contracts;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +11,10 @@ namespace AuctionService.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuctionsController(AuctionDbContext context, IMapper mapper) : ControllerBase
+public class AuctionsController(
+    AuctionDbContext context,
+    IMapper mapper,
+    IPublishEndpoint publishEndpoint) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AuctionDto>>> GetAllAuctions(string? date)
@@ -45,14 +50,19 @@ public class AuctionsController(AuctionDbContext context, IMapper mapper) : Cont
         var auction = mapper.Map<Auction>(auctionDto);
 
         //TODO: add current user as seller
+        auction.Seller = "test";
 
         await context.Auctions.AddAsync(auction);
         await context.SaveChangesAsync();
 
+        var dto = mapper.Map<AuctionDto>(auction);
+
+        await publishEndpoint.Publish(mapper.Map<AuctionCreated>(dto));
+        
         return CreatedAtAction(
             nameof(GetAuctionById),
-            new { id = auction.Id },
-            mapper.Map<AuctionDto>(auction));
+            new { id = dto.Id },
+            dto);
     }
 
     [HttpPut("{id:guid}")]
