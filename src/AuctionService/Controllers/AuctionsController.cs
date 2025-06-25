@@ -86,6 +86,7 @@ public class AuctionsController(
         auction.Item.Color = auctionDto.Color;
         auction.Item.Mileage = auctionDto.Mileage;
 
+        await publishEndpoint.Publish(mapper.Map<AuctionUpdated>(auction));
         await context.SaveChangesAsync();
 
         return Ok();
@@ -103,6 +104,7 @@ public class AuctionsController(
         // TODO: validate if the user is the seller of the auction
 
         context.Auctions.Remove(auction);
+        await publishEndpoint.Publish(new AuctionDeleted { Id = auction.Id.ToString() });
         await context.SaveChangesAsync();
 
         return Ok();
