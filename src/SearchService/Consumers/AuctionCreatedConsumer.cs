@@ -6,11 +6,11 @@ using SearchService.Models;
 
 namespace SearchService.Consumers;
 
-public class AuctionCreatedConsumer(IMapper mapper) : IConsumer<AuctionCreated>
+public class AuctionCreatedConsumer(IMapper mapper, ILogger<AuctionCreatedConsumer> logger) : IConsumer<AuctionCreated>
 {
     public async Task Consume(ConsumeContext<AuctionCreated> context)
     {
-        Console.WriteLine("--> Consuming auction created: " + context.Message.Id);
+        logger.LogInformation("--> Consuming auction created: " + context.Message.Id);
 
         var item = mapper.Map<Item>(context.Message);
         if (item.Model == "Foo")

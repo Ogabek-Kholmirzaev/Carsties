@@ -3,11 +3,11 @@ using MassTransit;
 
 namespace AuctionService.Consumers;
 
-public class AuctionCreatedFaultConsumer : IConsumer<Fault<AuctionCreated>>
+public class AuctionCreatedFaultConsumer(ILogger<AuctionCreatedFaultConsumer> logger) : IConsumer<Fault<AuctionCreated>>
 {
     public async Task Consume(ConsumeContext<Fault<AuctionCreated>> context)
     {
-        Console.WriteLine("--> Consuming faulty creation");
+        logger.LogInformation("--> Consuming faulty creation");
 
         var exception = context.Message.Exceptions.First();
         if (exception.ExceptionType == "System.ArgumentException")
@@ -17,7 +17,7 @@ public class AuctionCreatedFaultConsumer : IConsumer<Fault<AuctionCreated>>
         }
         else
         {
-            Console.WriteLine("Not an argument exception - update error dashboard somewhere");
+            logger.LogInformation("Not an argument exception - update error dashboard somewhere");
         }
     }
 }
