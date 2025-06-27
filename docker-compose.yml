@@ -21,6 +21,9 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    volumes:
+      - rabbitdata:/var/lib/rabbitmq
 volumes:
   pgdata:
   mongodata:
+  rabbitdata:
