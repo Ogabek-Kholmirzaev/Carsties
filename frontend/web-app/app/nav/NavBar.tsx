@@ -1,4 +1,3 @@
-import React from 'react'
 import { AiOutlineCar } from 'react-icons/ai'
 
 export default function NavBar() {
