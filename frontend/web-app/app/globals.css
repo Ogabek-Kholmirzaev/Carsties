@@ -6,6 +6,10 @@
   cursor: pointer;
 }
 
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
