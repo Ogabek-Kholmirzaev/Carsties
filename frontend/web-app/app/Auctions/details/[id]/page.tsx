@@ -5,6 +5,7 @@ import CarImage from "../../CarImage";
 import DetailedSpecs from "./DetailedSpecs";
 import EditButton from "./EditButton";
 import { getCurrentUser } from "@/app/actions/authActions";
+import DeleteButton from "./DeleteButton";
 
 export default async function Details({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -16,7 +17,12 @@ export default async function Details({ params }: { params: Promise<{ id: string
             <div className="flex justify-between">
                 <div className="flex items-center gap-3">
                     <Heading title={`${data.make} ${data.model}`} />
-                    {user?.username === data.seller && <EditButton id={data.id} />}
+                    {user?.username === data.seller && (
+                        <>
+                            <EditButton id={data.id} />
+                            <DeleteButton id={data.id} />
+                        </>
+                    )}
                 </div>
                 <div className="flex gap-3">
                     <h3 className="text-2xl font-semibold">Time remaining: </h3>
