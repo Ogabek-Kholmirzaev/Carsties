@@ -19,3 +19,7 @@ export async function updateAuctionTest(): Promise<{ status: number, message: st
 export async function createAuction(data: FieldValues) {
     return fetchWrapper.post('auctions', data);
 }
+
+export async function getDetailedViewData(id: string): Promise<Auction> {
+    return fetchWrapper.get(`auctions/${id}`);
+}
