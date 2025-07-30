@@ -6,6 +6,7 @@ import { FieldValues, useForm } from "react-hook-form"
 import Input from "../components/input";
 import { useEffect } from "react";
 import DateInput from "../components/DateInput";
+import { createAuction } from "../actions/auctionActions";
 
 export default function AuctionForm() {
     const router = useRouter();
@@ -21,8 +22,17 @@ export default function AuctionForm() {
         setFocus('make')
     }, [setFocus]);
 
-    function onSubmit(data: FieldValues) {
-        console.log(data);
+    async function onSubmit(data: FieldValues) {
+        try {
+            const res = await createAuction(data);
+            if (res.error) {
+                throw new Error(res.error);
+            }
+
+            router.push(`/auctions/details/${res.id}`)
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -62,6 +72,13 @@ export default function AuctionForm() {
                     rules={{ required: 'Mileage is required' }}
                 />
             </div>
+
+            <Input
+                name="imageUrl"
+                label="Image URL"
+                control={control}
+                rules={{ required: 'Image URL is required' }}
+            />
 
             <div className="grid grid-cols-2 gap-3">
                 <Input
