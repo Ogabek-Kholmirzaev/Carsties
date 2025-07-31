@@ -99,7 +99,7 @@ export default function AuctionForm({ auction }: Props) {
             </div>
 
             {
-                pathname === '/auction/create' &&
+                pathname === '/auctions/create' &&
                 <>
                     <Input
                         name="imageUrl"

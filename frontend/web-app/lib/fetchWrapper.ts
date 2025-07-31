@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 
-const baseUrl = 'htpp://localhost:6001/';
+const baseUrl = 'http://localhost:6001/';
 
 async function get(url: string) {
     const requestOptions = {
@@ -49,7 +49,7 @@ async function handleResponse(response: Response) {
     const data = text && JSON.parse(text);
 
     if (response.ok) {
-        return data || response.text;
+        return data || response.statusText;
     }
 
     const error = {
