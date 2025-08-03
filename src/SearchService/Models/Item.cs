@@ -4,7 +4,6 @@ namespace SearchService.Models;
 
 public class Item : Entity
 {
-    
     public int ReservePrice { get; set; }
     public string Seller { get; set; } = null!;
     public string Winner { get; set; } = null!;

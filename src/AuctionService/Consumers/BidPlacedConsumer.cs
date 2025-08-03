@@ -10,14 +10,14 @@ public class BidPlacedConsumer(AuctionDbContext dbContext, ILogger<BidPlacedCons
     {
         logger.LogInformation("--> Consuming bid placed");
 
-        var auction = await dbContext.Auctions.FindAsync(context.Message.AuctionId);
+        var auction = await dbContext.Auctions.FindAsync(Guid.Parse(context.Message.AuctionId));
         if (auction == null)
         {
             logger.LogError($"--> Auction {context.Message.AuctionId} not found");
             return;
         }
 
-        if (auction.CurrentHighBid != null ||
+        if (auction.CurrentHighBid == null ||
             context.Message.BidStatus.Contains("Accepted") &&
             context.Message.Amount > auction.CurrentHighBid)
         {

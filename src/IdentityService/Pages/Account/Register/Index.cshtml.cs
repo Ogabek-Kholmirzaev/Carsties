@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Duende.IdentityModel;
 using IdentityService.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -48,7 +49,7 @@ public class Index(
             var result = await userManager.CreateAsync(user, Input.Password);
             if (result.Succeeded)
             {
-                await userManager.AddClaimsAsync(user, [new Claim(ClaimTypes.Name, Input.FullName)]);
+                await userManager.AddClaimsAsync(user, [new Claim(JwtClaimTypes.Name, Input.FullName)]);
                 RegisterSuccess = true;
             }
         }
