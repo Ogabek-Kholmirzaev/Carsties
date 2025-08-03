@@ -23,7 +23,7 @@ builder.Services.AddMassTransit(x =>
             h.Username(builder.Configuration["RabbitMq:Username"] ?? "guest");
             h.Password(builder.Configuration["RabbitMq:Password"] ?? "guest");
         });
-        
+
         cfg.ConfigureEndpoints(context);
     });
 });
@@ -36,6 +36,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters.ValidateAudience = false;
         options.TokenValidationParameters.NameClaimType = "username";
     });
+
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();
 

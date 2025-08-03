@@ -1,3 +1,5 @@
+using AutoMapper;
+using BiddingService.DTOs;
 using BiddingService.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +9,7 @@ namespace BiddingService.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class BidsController : ControllerBase
+public class BidsController(IMapper mapper) : ControllerBase
 {
     [Authorize]
     [HttpPost]
@@ -58,17 +60,17 @@ public class BidsController : ControllerBase
 
         await DB.SaveAsync(bid);
 
-        return Ok(bid);
+        return Ok(mapper.Map<BidDto>(bid));
     }
 
     [HttpGet("{auctionId}")]
-    public async Task<ActionResult<List<Bid>>> GetAuctionBids(string auctionId)
+    public async Task<ActionResult<List<BidDto>>> GetAuctionBids(string auctionId)
     {
         var bids = await DB.Find<Bid>()
             .Match(b => b.AuctionId == auctionId)
             .Sort(b => b.Descending(x => x.BidTime))
             .ExecuteAsync();
 
-        return bids;
+        return bids.Select(mapper.Map<BidDto>).ToList();
     }
 }
