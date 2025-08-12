@@ -1,11 +1,14 @@
 using MassTransit;
+using NotificationService.Consumers;
+using NotificationService.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMassTransit(x =>
 {
+    x.AddConsumersFromNamespaceContaining<AuctionCreatedConsumer>();
     x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("notifications", false));
-    
+
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host(builder.Configuration["RabbitMq:Host"], "/", h =>
@@ -18,6 +21,10 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
+
+app.MapHub<NotificationHub>("/notifications");
 
 app.Run();
