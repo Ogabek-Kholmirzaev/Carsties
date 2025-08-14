@@ -3,16 +3,17 @@
 import AuctionCard from "./AuctionCard";
 import AppPagination from "../components/AppPagination";
 import { useEffect, useState } from "react";
-import { Auction, PagedResult } from "@/types";
 import { getDataAsync } from "../actions/auctionActions";
 import Filters from "./Filters";
 import { useParamsStore } from "@/hooks/useParamsStore";
 import { useShallow } from "zustand/shallow";
 import queryString from "query-string";
 import EmptyFilter from "../components/EmptyFilter";
+import { useAuctionStore } from "@/hooks/useAuctionStore";
 
 export default function Listings() {
-    const [data, setData] = useState<PagedResult<Auction>>();
+    const [loading, setLoading] = useState(true);
+
     const params = useParamsStore(useShallow(state => ({
         pageNumber: state.pageNumber,
         pageSize: state.pageSize,
@@ -23,6 +24,14 @@ export default function Listings() {
         winner: state.winner
     })));
     const setParams = useParamsStore(state => state.setParams);
+
+    const data = useAuctionStore(useShallow(state => ({
+        auctions: state.auctions,
+        totalCount: state.totalCount,
+        pageCount: state.pageCount
+    })));
+    const setData = useAuctionStore(state => state.setData);
+
     const url = queryString.stringifyUrl({ url: '', query: params }, { skipEmptyString: true });
 
     function setPageNumber(pageNumber: number) {
@@ -32,10 +41,11 @@ export default function Listings() {
     useEffect(() => {
         getDataAsync(url).then(data => {
             setData(data);
+            setLoading(false);
         })
-    }, [url]);
+    }, [url, setData]);
 
-    if (!data) {
+    if (loading) {
         return <h3>Loading...</h3>
     }
 
@@ -49,7 +59,7 @@ export default function Listings() {
                 : (
                     <>
                         <div className="grid grid-cols-4 gap-6">
-                            {data && data.results.map(auction => (
+                            {data && data.auctions.map(auction => (
                                 <AuctionCard key={auction.id} auction={auction} />
                             ))}
                         </div>
