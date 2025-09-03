@@ -138,6 +138,21 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+  web-app:
+    image: ogabekkholmirzaev/web-app:latest
+    build:
+      context: .
+      dockerfile: frontend/web-app/Dockerfile
+    environment:
+      - AUTH_SECRET="PfV2+/MiqvUT+vQImUk/pWugu/UzIBnJvykEGXzFlkg="
+      - API_URL=http://gateway-svc/
+      - ID_URL=http://localhost:5001
+      - AUTH_URL=http://localhost:3000
+      - AUTH_URL_INTERNAL=http://web-app:3000
+    ports:
+      - 3000:3000
+    volumes:
+      - /var/lib/web/data
 volumes:
   pgdata:
   mongodata:
