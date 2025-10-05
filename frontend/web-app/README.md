@@ -34,3 +34,28 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Docker build
+
+You can build the Docker image in two ways. The Dockerfile supports an `APP_DIR` build-arg so it works whether you set the build context to the repository root or to the `frontend/web-app` folder.
+
+1) Build from inside the web-app folder (simple):
+
+```powershell
+cd frontend\web-app
+docker build -t ogabekkholmirzaev/web-app:latest .
+```
+
+2) Build from the repository root and pass the app directory as a build-arg (recommended for CI):
+
+```powershell
+# From repository root - pass build context as the web-app folder
+docker build -t ogabekkholmirzaev/web-app:latest -f frontend\web-app\Dockerfile --build-arg APP_DIR=frontend/web-app frontend/web-app
+
+# Or using buildx and push
+docker buildx build --push -t ogabekkholmirzaev/web-app:latest -f frontend\web-app\Dockerfile --build-arg APP_DIR=frontend/web-app frontend/web-app
+```
+
+Notes:
+- The Dockerfile will default to `APP_DIR=.` so building from inside `frontend/web-app` continues to work.
+- Use `.dockerignore` to avoid sending large directories (node_modules, .next, .git) into the build context.
